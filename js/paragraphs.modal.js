@@ -17,8 +17,10 @@
       $('.paragraph-type-add-modal-button', context)
         .once('add-click-handler')
         .on('click', function (event) {
-          var $button = $(this);
-          var $add_more_wrapper = $button.parent().siblings('.paragraphs-add-dialog');
+          var $button = $(this),
+              addFormType = drupalSettings.paragraphs.addForm,
+              $add_more_wrapper = $button.parent().siblings('.paragraphs-add-' + addFormType);
+          
           Drupal.paragraphsAddModal.openDialog($add_more_wrapper, $button.val());
 
           // Stop default execution of click event.

@@ -248,33 +248,38 @@ class ParagraphsWidget extends WidgetBase {
    *   An array of setting option usable as a value for a "#options" key.
    */
   protected function getSettingOptions($setting_name) {
-    switch($setting_name) {
+    switch ($setting_name) {
       case 'edit_mode':
         $options = [
           'open' => $this->t('Open'),
           'closed' => $this->t('Closed'),
         ];
         break;
+
       case 'closed_mode':
         $options = [
           'summary' => $this->t('Summary'),
           'preview' => $this->t('Preview'),
         ];
         break;
+
       case 'autocollapse':
         $options = [
           'none' => $this->t('None'),
           'all' => $this->t('All'),
         ];
         break;
+
       case 'add_mode':
         $options = [
           'select' => $this->t('Select list'),
           'button' => $this->t('Buttons'),
           'dropdown' => $this->t('Dropdown button'),
           'modal' => $this->t('Modal form'),
+          'icons' => $this->t('Icons'),
         ];
         break;
+
       case 'features':
         $options = [
           'duplicate' => $this->t('Duplicate'),
@@ -859,10 +864,67 @@ class ParagraphsWidget extends WidgetBase {
     ];
 
     $element['#attached']['library'][] = 'paragraphs/drupal.paragraphs.modal';
+    $element['#attached']['drupalSettings']['paragraphs']['addForm'] = 'dialog';
     if ($this->isFeatureEnabled('add_above')) {
       $element['#attached']['library'][] = 'paragraphs/drupal.paragraphs.add_above_button';
     }
 
+  }
+
+  /**
+   * Builds an add paragraph button for opening of modal form with icons.
+   *
+   * @param array $element
+   *   Render element.
+   */
+  protected function buildIconsAddForm(array &$element) {
+    // Attach the theme for the dialog template.
+    $element['#theme'] = 'paragraphs_add_icons';
+
+    $element['add_modal_form_area'] = [
+      '#type' => 'container',
+      '#attributes' => [
+        'class' => [
+          'paragraph-type-add-modal',
+          'first-button',
+        ],
+      ],
+      '#access' => $this->allowReferenceChanges(),
+      '#weight' => -2000,
+    ];
+
+    $element['add_modal_form_area']['add_more'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Add @title', ['@title' => $this->getSetting('title')]),
+      '#name' => 'button_add_modal',
+      '#attributes' => [
+        'class' => [
+          'paragraph-type-add-modal-button',
+          'js-show',
+        ],
+      ],
+    ];
+
+    // Hidden field provided by "Modal" mode. Field is provided for additional
+    // integrations, where also position of addition can be specified. It should
+    // be used by sub-modules or other paragraphs integration. CSS class is used
+    // to support easier element selecting in JavaScript.
+    $element['add_modal_form_area']['add_more_delta'] = [
+      '#type' => 'hidden',
+      '#attributes' => [
+        'class' => [
+          'paragraph-type-add-modal-delta',
+        ],
+      ],
+    ];
+
+    $element['#attached']['library'][] = 'paragraphs/drupal.paragraphs.modal';
+    $element['#attached']['drupalSettings']['paragraphs']['addForm'] = 'icons';
+    if ($this->isFeatureEnabled('add_above')) {
+      $element['#attached']['library'][] = 'paragraphs/drupal.paragraphs.add_above_button';
+    }
+    
+    ksm($element);
   }
 
   /**
@@ -1298,7 +1360,7 @@ class ParagraphsWidget extends WidgetBase {
       return $add_more_elements;
     }
 
-    if (in_array($this->getSetting('add_mode'), ['button', 'dropdown', 'modal'])) {
+    if (in_array($this->getSetting('add_mode'), ['button', 'dropdown', 'modal', 'icons'])) {
       return $this->buildButtonsAddMode();
     }
 
@@ -1485,7 +1547,7 @@ class ParagraphsWidget extends WidgetBase {
       $add_more_elements[$button_key] = $this->expandButton([
         '#type' => 'submit',
         '#name' => $this->fieldIdPrefix . '_' . $machine_name . '_add_more',
-        '#value' => $add_mode == 'modal' ? $label : $this->t('Add @type', ['@type' => $label]),
+        '#value' => ($add_mode == 'modal' || $add_mode == 'icons')  ? $label : $this->t('Add @type', ['@type' => $label]),
         '#attributes' => ['class' => ['field-add-more-submit']],
         '#limit_validation_errors' => [array_merge($this->fieldParents, [$this->fieldDefinition->getName(), 'add_more'])],
         '#submit' => [[get_class($this), 'addMoreSubmit']],
@@ -1499,6 +1561,10 @@ class ParagraphsWidget extends WidgetBase {
       if ($add_mode === 'modal' && $icon_url = $paragraphs_type_storage->load($machine_name)->getIconUrl()) {
         $add_more_elements[$button_key]['#attributes']['style'] = 'background-image: url(' . $icon_url . ');';
       }
+
+      if ($add_mode === 'icons' && $icon_url = $paragraphs_type_storage->load($machine_name)->getIconUrl()) {
+        $add_more_elements[$button_key]['#attributes']['style'] = 'background-image: url(' . $icon_url . ');';
+      }
     }
 
     // Determine if buttons should be rendered as dropbuttons.
@@ -1508,6 +1574,10 @@ class ParagraphsWidget extends WidgetBase {
     }
     elseif ($add_mode == 'modal') {
       $this->buildModalAddForm($add_more_elements);
+      $add_more_elements['add_modal_form_area']['#suffix'] = $this->t('to %type', ['%type' => $this->fieldDefinition->getLabel()]);
+    }
+    elseif ($add_mode == 'icons') {
+      $this->buildIconsAddForm($add_more_elements);
       $add_more_elements['add_modal_form_area']['#suffix'] = $this->t('to %type', ['%type' => $this->fieldDefinition->getLabel()]);
     }
     $add_more_elements['#weight'] = 1;
