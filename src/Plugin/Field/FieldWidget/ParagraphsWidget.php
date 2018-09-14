@@ -877,9 +877,21 @@ class ParagraphsWidget extends WidgetBase {
    * @param array $element
    *   Render element.
    */
-  protected function buildIconsAddForm(array &$element) {
+  protected function buildIconsAddForm(array &$element, $add_mode) {
+    //ksm($add_mode);
+
     // Attach the theme for the dialog template.
-    $element['#theme'] = 'paragraphs_add_icons';
+    switch ($add_mode) {
+      case 'icons':
+        $element['#theme'] = 'paragraphs_add_icons';
+        $element['#attached']['drupalSettings']['paragraphs']['addForm'] = 'icons';
+        break;
+
+      case 'modal':
+        $element['#theme'] = 'paragraphs_add_dialog';
+        $element['#attached']['drupalSettings']['paragraphs']['addForm'] = 'dialog';
+        break;
+    }
 
     $element['add_modal_form_area'] = [
       '#type' => 'container',
@@ -919,12 +931,10 @@ class ParagraphsWidget extends WidgetBase {
     ];
 
     $element['#attached']['library'][] = 'paragraphs/drupal.paragraphs.modal';
-    $element['#attached']['drupalSettings']['paragraphs']['addForm'] = 'icons';
     if ($this->isFeatureEnabled('add_above')) {
       $element['#attached']['library'][] = 'paragraphs/drupal.paragraphs.add_above_button';
     }
-    
-    ksm($element);
+
   }
 
   /**
@@ -1539,7 +1549,7 @@ class ParagraphsWidget extends WidgetBase {
     $options = $this->getAccessibleOptions();
     $add_mode = $this->getSetting('add_mode');
     $paragraphs_type_storage = \Drupal::entityTypeManager()->getStorage('paragraphs_type');
-
+    //ksm($paragraphs_type_storage);
     // Build the buttons.
     $add_more_elements = [];
     foreach ($options as $machine_name => $label) {
@@ -1564,6 +1574,16 @@ class ParagraphsWidget extends WidgetBase {
 
       if ($add_mode === 'icons' && $icon_url = $paragraphs_type_storage->load($machine_name)->getIconUrl()) {
         $add_more_elements[$button_key]['#attributes']['style'] = 'background-image: url(' . $icon_url . ');';
+
+        $uri = $paragraphs_type_storage->load($machine_name)->getIconUri();
+        $image = [
+          '#theme' => 'image_style',
+          '#style_name' => 'medium',
+          '#uri' => $uri,
+        ];
+
+        $add_more_elements[$button_key]['#prefix'] = \Drupal::service('renderer')->render($image);
+
       }
     }
 
@@ -1573,11 +1593,11 @@ class ParagraphsWidget extends WidgetBase {
       $add_more_elements['#suffix'] = $this->t('to %type', ['%type' => $this->fieldDefinition->getLabel()]);
     }
     elseif ($add_mode == 'modal') {
-      $this->buildModalAddForm($add_more_elements);
+      $this->buildModalAddForm($add_more_elements, $add_mode);
       $add_more_elements['add_modal_form_area']['#suffix'] = $this->t('to %type', ['%type' => $this->fieldDefinition->getLabel()]);
     }
     elseif ($add_mode == 'icons') {
-      $this->buildIconsAddForm($add_more_elements);
+      $this->buildIconsAddForm($add_more_elements, $add_mode);
       $add_more_elements['add_modal_form_area']['#suffix'] = $this->t('to %type', ['%type' => $this->fieldDefinition->getLabel()]);
     }
     $add_more_elements['#weight'] = 1;

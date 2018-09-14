@@ -20,8 +20,8 @@
           var $button = $(this),
               addFormType = drupalSettings.paragraphs.addForm,
               $add_more_wrapper = $button.parent().siblings('.paragraphs-add-' + addFormType);
-          
-          Drupal.paragraphsAddModal.openDialog($add_more_wrapper, $button.val());
+          console.log($add_more_wrapper);
+          Drupal.paragraphsAddModal.openDialog($add_more_wrapper, $button.val(), addFormType);
 
           // Stop default execution of click event.
           event.preventDefault();
@@ -45,14 +45,27 @@
    *   paragraph to list. Wrapper also contains dialog template.
    * @param {string} title
    *   The title of the modal form window.
+   * @param {string} addFormType
+   *   Form type selected in field settings.
    */
-  Drupal.paragraphsAddModal.openDialog = function ($context, title) {
+  Drupal.paragraphsAddModal.openDialog = function ($context, title, addFormType) {
+
+    var formType = {
+      icons : {
+        width : '90%',
+        resizable : true
+      },
+      modal : {
+        width : 'auto',
+        resizable : false
+      }
+    };
 
     $context.dialog({
       modal: true,
-      resizable: false,
+      resizable: formType[addFormType].resizable,
       title: title,
-      width: 'auto',
+      width: formType[addFormType].width,
       close: function () {
         var $dialog = $(this);
 

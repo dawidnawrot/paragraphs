@@ -319,8 +319,11 @@ function template_preprocess_paragraphs_add_dialog(&$variables) {
  *   - buttons: An array of buttons to display in the modal form.
  */
 function template_preprocess_paragraphs_add_icons(array &$variables) {
+  
   // Define variables for the template.
+  
   $variables += ['buttons' => []];
+  ksm($variables);
   foreach (Element::children($variables['element']) as $key) {
     if ($key == 'add_modal_form_area') {
       // $add variable for the add button.
