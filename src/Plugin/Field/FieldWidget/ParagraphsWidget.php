@@ -1577,9 +1577,9 @@ class ParagraphsWidget extends WidgetBase {
 
         $uri = $paragraphs_type_storage->load($machine_name)->getIconUri();
         $image = [
-          '#theme' => 'image_style',
-          '#style_name' => 'medium',
+          '#theme' => 'image',
           '#uri' => $uri,
+          '#width' => 300,
         ];
 
         $add_more_elements[$button_key]['#prefix'] = \Drupal::service('renderer')->render($image);
