@@ -13,6 +13,11 @@ ul.paragraphs-add-dialog-list input.field-add-more-submit {
   border-radius: 3px;
 }
 
+.paragraphs-add-icon-grid .col-3 {
+  float: left;
+  width: 25%;
+}
+
 .paragraphs-add-dialog-row {
   padding: 5px;
 }

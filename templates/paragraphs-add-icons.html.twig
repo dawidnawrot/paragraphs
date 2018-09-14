@@ -12,12 +12,13 @@
  */
 #}
 {{ add }}
-<div class="paragraphs-add-icons">
-    <div class="container-12">
+<div class="paragraphs-add-icons js-hide">
+    <div class="paragraphs-add-icon-grid">
       {% for button in buttons %}
-      <div class="grid-4">
+      <div class="col-3">
         {{ button }}
       </div>
       {% endfor %}
     </div>
+  </ul>
 </div>
