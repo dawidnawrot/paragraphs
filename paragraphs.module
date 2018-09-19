@@ -15,6 +15,7 @@ use Drupal\migrate_drupal\Plugin\migrate\FieldMigration;
 use Drupal\paragraphs\Entity\ParagraphsType;
 use Drupal\paragraphs\Plugin\migrate\field\FieldCollection;
 use Drupal\Core\Render\Element;
+use Drupal\paragraphs\Plugin\Field\FieldWidget\ParagraphsWidget as ParagraphsWidget;
 
 /**
  * Implements hook_help().
@@ -319,11 +320,10 @@ function template_preprocess_paragraphs_add_dialog(&$variables) {
  *   - buttons: An array of buttons to display in the modal form.
  */
 function template_preprocess_paragraphs_add_icons(array &$variables) {
-  
+  $prefixes = ParagraphsWidget::iconsElementsPrefixes();
   // Define variables for the template.
-  
   $variables += ['buttons' => []];
-  ksm($variables);
+
   foreach (Element::children($variables['element']) as $key) {
     if ($key == 'add_modal_form_area') {
       // $add variable for the add button.
@@ -331,7 +331,12 @@ function template_preprocess_paragraphs_add_icons(array &$variables) {
     }
     else {
       // Buttons for the paragraph types in the modal form.
-      $variables['buttons'][$key] = $variables['element'][$key];
+      foreach ($prefixes as $prefix) {
+        if (substr($key, 0, strlen($prefix)) === $prefix) {
+          $element_key = str_replace($prefix, '', $key);
+        }
+      }
+      $variables['items'][$element_key][$key] = $variables['element'][$key];
     }
   }
 }

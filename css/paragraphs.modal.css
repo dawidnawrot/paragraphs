@@ -16,6 +16,7 @@ ul.paragraphs-add-dialog-list input.field-add-more-submit {
 .paragraphs-add-icon-grid .col-3 {
   float: left;
   width: 25%;
+  min-height: 250px;
 }
 
 .paragraphs-add-dialog-row {

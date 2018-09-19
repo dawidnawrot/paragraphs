@@ -1548,12 +1548,13 @@ class ParagraphsWidget extends WidgetBase {
   protected function buildButtonsAddMode() {
     $options = $this->getAccessibleOptions();
     $add_mode = $this->getSetting('add_mode');
+    $prefixes = $this->iconsElementsPrefixes();
     $paragraphs_type_storage = \Drupal::entityTypeManager()->getStorage('paragraphs_type');
-    //ksm($paragraphs_type_storage);
+
     // Build the buttons.
     $add_more_elements = [];
     foreach ($options as $machine_name => $label) {
-      $button_key = 'add_more_button_' . $machine_name;
+      $button_key = $prefixes[0] . $machine_name;
       $add_more_elements[$button_key] = $this->expandButton([
         '#type' => 'submit',
         '#name' => $this->fieldIdPrefix . '_' . $machine_name . '_add_more',
@@ -1572,17 +1573,33 @@ class ParagraphsWidget extends WidgetBase {
         $add_more_elements[$button_key]['#attributes']['style'] = 'background-image: url(' . $icon_url . ');';
       }
 
-      if ($add_mode === 'icons' && $icon_url = $paragraphs_type_storage->load($machine_name)->getIconUrl()) {
-        $add_more_elements[$button_key]['#attributes']['style'] = 'background-image: url(' . $icon_url . ');';
+      if ($add_mode === 'icons') {
+        
+        // Description.
+        if ($description = $paragraphs_type_storage->load($machine_name)->getDescription()) {
+          
+          $description_key = $prefixes[1] . $machine_name;
+          $add_more_elements[$description_key] = [
+            '#type' => 'item',
+            '#markup' => $description,
+          ];
+        }
 
-        $image = [
-          '#theme' => 'image',
-          '#uri' => $icon_url,
-          '#width' => 300,
-        ];
+        // Generate icon.
+        if ($icon_url = $paragraphs_type_storage->load($machine_name)->getIconUrl()) {
+          $image = [
+            '#theme' => 'image',
+            '#uri' => $icon_url,
+            '#width' => 300,
+          ];
 
-        $add_more_elements[$button_key]['#prefix'] = \Drupal::service('renderer')->render($image);
+          $image_key = $prefixes[2] . $machine_name;
 
+          $add_more_elements[$image_key] = [
+            '#type' => 'item',
+            '#markup' => \Drupal::service('renderer')->render($image),
+          ];
+        }
       }
     }
 
@@ -1600,8 +1617,16 @@ class ParagraphsWidget extends WidgetBase {
       $add_more_elements['add_modal_form_area']['#suffix'] = $this->t('to %type', ['%type' => $this->fieldDefinition->getLabel()]);
     }
     $add_more_elements['#weight'] = 1;
-
+    //ksm($add_more_elements);
     return $add_more_elements;
+  }
+
+  public static function iconsElementsPrefixes() {
+    return [
+      'add_more_button_',
+      'paragraph_entity_description_',
+      'paragraph_entity_image_',
+    ];
   }
 
   /**
@@ -1732,7 +1757,7 @@ class ParagraphsWidget extends WidgetBase {
    */
   public static function addMoreSubmit(array $form, FormStateInterface $form_state) {
     $submit = ParagraphsWidget::getSubmitElementInfo($form, $form_state);
-
+    //dd($submit);
     if ($submit['widget_state']['real_item_count'] < $submit['element']['#cardinality'] || $submit['element']['#cardinality'] == FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED) {
       $field_path = array_merge($submit['element']['#field_parents'], [$submit['element']['#field_name']]);
       $add_more_delta = NestedArray::getValue(
