@@ -311,9 +311,9 @@ function template_preprocess_paragraphs_add_dialog(&$variables) {
 }
 
 /**
- * Prepares variables for modal form add widget template.
+ * Prepares variables for images and description modal form add widget template.
  *
- * Default template: paragraphs-add-dialog.html.twig
+ * Default template: paragraphs-add-icons.html.twig
  *
  * @param array $variables
  *   An associative array containing:
@@ -322,7 +322,7 @@ function template_preprocess_paragraphs_add_dialog(&$variables) {
 function template_preprocess_paragraphs_add_icons(array &$variables) {
   $prefixes = ParagraphsWidget::iconsElementsPrefixes();
   // Define variables for the template.
-  $variables += ['buttons' => []];
+  $variables += ['items' => []];
 
   foreach (Element::children($variables['element']) as $key) {
     if ($key == 'add_modal_form_area') {

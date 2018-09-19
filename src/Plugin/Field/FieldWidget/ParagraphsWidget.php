@@ -1554,6 +1554,34 @@ class ParagraphsWidget extends WidgetBase {
     // Build the buttons.
     $add_more_elements = [];
     foreach ($options as $machine_name => $label) {
+
+      if ($add_mode === 'icons') {
+        // Generate icon.
+        if ($icon_url = $paragraphs_type_storage->load($machine_name)->getIconUrl()) {
+          $image = [
+            '#theme' => 'image',
+            '#uri' => $icon_url,
+            '#width' => 300,
+          ];
+
+          $image_key = $prefixes[2] . $machine_name;
+
+          $add_more_elements[$image_key] = [
+            '#type' => 'item',
+            '#markup' => \Drupal::service('renderer')->render($image),
+          ];
+        }
+
+        // Description.
+        if ($description = $paragraphs_type_storage->load($machine_name)->getDescription()) {
+          $description_key = $prefixes[1] . $machine_name;
+          $add_more_elements[$description_key] = [
+            '#type' => 'item',
+            '#markup' => $description,
+          ];
+        }
+      }
+
       $button_key = $prefixes[0] . $machine_name;
       $add_more_elements[$button_key] = $this->expandButton([
         '#type' => 'submit',
@@ -1572,35 +1600,6 @@ class ParagraphsWidget extends WidgetBase {
       if ($add_mode === 'modal' && $icon_url = $paragraphs_type_storage->load($machine_name)->getIconUrl()) {
         $add_more_elements[$button_key]['#attributes']['style'] = 'background-image: url(' . $icon_url . ');';
       }
-
-      if ($add_mode === 'icons') {
-        
-        // Description.
-        if ($description = $paragraphs_type_storage->load($machine_name)->getDescription()) {
-          
-          $description_key = $prefixes[1] . $machine_name;
-          $add_more_elements[$description_key] = [
-            '#type' => 'item',
-            '#markup' => $description,
-          ];
-        }
-
-        // Generate icon.
-        if ($icon_url = $paragraphs_type_storage->load($machine_name)->getIconUrl()) {
-          $image = [
-            '#theme' => 'image',
-            '#uri' => $icon_url,
-            '#width' => 300,
-          ];
-
-          $image_key = $prefixes[2] . $machine_name;
-
-          $add_more_elements[$image_key] = [
-            '#type' => 'item',
-            '#markup' => \Drupal::service('renderer')->render($image),
-          ];
-        }
-      }
     }
 
     // Determine if buttons should be rendered as dropbuttons.
@@ -1617,10 +1616,16 @@ class ParagraphsWidget extends WidgetBase {
       $add_more_elements['add_modal_form_area']['#suffix'] = $this->t('to %type', ['%type' => $this->fieldDefinition->getLabel()]);
     }
     $add_more_elements['#weight'] = 1;
-    //ksm($add_more_elements);
+
     return $add_more_elements;
   }
 
+  /**
+   * Builds list of prefixes for icons mode.
+   *
+   * @return array
+   *   Prefixes array.
+   */
   public static function iconsElementsPrefixes() {
     return [
       'add_more_button_',
