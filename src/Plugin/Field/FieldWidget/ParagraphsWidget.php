@@ -1575,10 +1575,9 @@ class ParagraphsWidget extends WidgetBase {
       if ($add_mode === 'icons' && $icon_url = $paragraphs_type_storage->load($machine_name)->getIconUrl()) {
         $add_more_elements[$button_key]['#attributes']['style'] = 'background-image: url(' . $icon_url . ');';
 
-        $uri = $paragraphs_type_storage->load($machine_name)->getIconUri();
         $image = [
           '#theme' => 'image',
-          '#uri' => $uri,
+          '#uri' => $icon_url,
           '#width' => 300,
         ];
 

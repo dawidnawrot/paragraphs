@@ -123,17 +123,6 @@ class ParagraphsType extends ConfigEntityBundleBase implements ParagraphsTypeInt
   /**
    * {@inheritdoc}
    */
-  public function getIconUri() {
-    if ($image = $this->getIconFile()) {
-      return $image->getFileUri();
-    }
-
-    return FALSE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getBehaviorPlugin($instance_id) {
     return $this->getBehaviorPlugins()->get($instance_id);
   }
