@@ -20,7 +20,7 @@
           var $button = $(this),
               addFormType = drupalSettings.paragraphs.addForm,
               $add_more_wrapper = $button.parent().siblings('.paragraphs-add-' + addFormType);
-          console.log($add_more_wrapper);
+
           Drupal.paragraphsAddModal.openDialog($add_more_wrapper, $button.val(), addFormType);
 
           // Stop default execution of click event.
@@ -55,7 +55,7 @@
         width : '90%',
         resizable : true
       },
-      modal : {
+      dialog : {
         width : 'auto',
         resizable : false
       }

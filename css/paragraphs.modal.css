@@ -17,6 +17,7 @@ ul.paragraphs-add-dialog-list input.field-add-more-submit {
   float: left;
   width: 25%;
   min-height: 250px;
+  text-align: center;
 }
 
 .paragraphs-add-dialog-row {
