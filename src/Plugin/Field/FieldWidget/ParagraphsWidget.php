@@ -1558,19 +1558,17 @@ class ParagraphsWidget extends WidgetBase {
       if ($add_mode === 'icons') {
         // Generate icon.
         $icon_url = (!empty($paragraphs_type_storage->load($machine_name)->getIconUrl())) ? $paragraphs_type_storage->load($machine_name)->getIconUrl() : drupal_get_path('module', 'paragraphs') . '/icons/no-camera.svg';
-          $image = [
-            '#theme' => 'image',
-            '#uri' => $icon_url,
-          ];
+        $image = [
+          '#theme' => 'image',
+          '#uri' => $icon_url,
+        ];
 
-          $image_key = $prefixes[2] . $machine_name;
+        $image_key = $prefixes[2] . $machine_name;
 
-          $add_more_elements[$image_key] = [
-            '#type' => 'item',
-            '#markup' => \Drupal::service('renderer')->render($image),
-            '#attributes' => ['class' => 'image-container'],
-          ];
-        
+        $add_more_elements[$image_key] = [
+          '#type' => 'item',
+          '#markup' => \Drupal::service('renderer')->render($image),
+        ];
 
         // Description.
         if ($description = $paragraphs_type_storage->load($machine_name)->getDescription()) {
