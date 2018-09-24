@@ -51,7 +51,7 @@
   Drupal.paragraphsAddModal.openDialog = function ($context, title, addFormType) {
 
     var formType = {
-      icons : {
+      modal_full : {
         width : '90%',
         resizable : true
       },

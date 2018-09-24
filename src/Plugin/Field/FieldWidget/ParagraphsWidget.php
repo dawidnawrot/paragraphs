@@ -276,7 +276,7 @@ class ParagraphsWidget extends WidgetBase {
           'button' => $this->t('Buttons'),
           'dropdown' => $this->t('Dropdown button'),
           'modal' => $this->t('Modal form'),
-          'icons' => $this->t('Icons'),
+          'modal_full' => $this->t('Modal form - full'),
         ];
         break;
 
@@ -877,14 +877,12 @@ class ParagraphsWidget extends WidgetBase {
    * @param array $element
    *   Render element.
    */
-  protected function buildIconsAddForm(array &$element, $add_mode) {
-    //ksm($add_mode);
-
+  protected function buildModalFullAddForm(array &$element, $add_mode) {
     // Attach the theme for the dialog template.
     switch ($add_mode) {
-      case 'icons':
-        $element['#theme'] = 'paragraphs_add_icons';
-        $element['#attached']['drupalSettings']['paragraphs']['addForm'] = 'icons';
+      case 'modal_full':
+        $element['#theme'] = 'paragraphs_add_modal_full';
+        $element['#attached']['drupalSettings']['paragraphs']['addForm'] = 'modal_full';
         break;
 
       case 'modal':
@@ -1370,7 +1368,7 @@ class ParagraphsWidget extends WidgetBase {
       return $add_more_elements;
     }
 
-    if (in_array($this->getSetting('add_mode'), ['button', 'dropdown', 'modal', 'icons'])) {
+    if (in_array($this->getSetting('add_mode'), ['button', 'dropdown', 'modal', 'modal_full'])) {
       return $this->buildButtonsAddMode();
     }
 
@@ -1548,14 +1546,14 @@ class ParagraphsWidget extends WidgetBase {
   protected function buildButtonsAddMode() {
     $options = $this->getAccessibleOptions();
     $add_mode = $this->getSetting('add_mode');
-    $prefixes = $this->iconsElementsPrefixes();
+    $prefixes = $this->modalFullElementsPrefixes();
     $paragraphs_type_storage = \Drupal::entityTypeManager()->getStorage('paragraphs_type');
 
     // Build the buttons.
     $add_more_elements = [];
     foreach ($options as $machine_name => $label) {
       // Add mode: modal full.
-      if ($add_mode === 'icons') {
+      if ($add_mode === 'modal_full') {
         // Generate icon.
         $icon_url = (!empty($paragraphs_type_storage->load($machine_name)->getIconUrl())) ? $paragraphs_type_storage->load($machine_name)->getIconUrl() : drupal_get_path('module', 'paragraphs') . '/icons/no-camera.svg';
         $image = [
@@ -1592,7 +1590,7 @@ class ParagraphsWidget extends WidgetBase {
       $add_more_elements[$button_key] = $this->expandButton([
         '#type' => 'submit',
         '#name' => $this->fieldIdPrefix . '_' . $machine_name . '_add_more',
-        '#value' => ($add_mode == 'modal' || $add_mode == 'icons')  ? $label : $this->t('Add @type', ['@type' => $label]),
+        '#value' => ($add_mode == 'modal' || $add_mode == 'modal_full')  ? $label : $this->t('Add @type', ['@type' => $label]),
         '#attributes' => ['class' => ['field-add-more-submit']],
         '#limit_validation_errors' => [array_merge($this->fieldParents, [$this->fieldDefinition->getName(), 'add_more'])],
         '#submit' => [[get_class($this), 'addMoreSubmit']],
@@ -1617,8 +1615,8 @@ class ParagraphsWidget extends WidgetBase {
       $this->buildModalAddForm($add_more_elements, $add_mode);
       $add_more_elements['add_modal_form_area']['#suffix'] = $this->t('to %type', ['%type' => $this->fieldDefinition->getLabel()]);
     }
-    elseif ($add_mode == 'icons') {
-      $this->buildIconsAddForm($add_more_elements, $add_mode);
+    elseif ($add_mode == 'modal_full') {
+      $this->buildModalFullAddForm($add_more_elements, $add_mode);
       $add_more_elements['add_modal_form_area']['#suffix'] = $this->t('to %type', ['%type' => $this->fieldDefinition->getLabel()]);
     }
     $add_more_elements['#weight'] = 1;
@@ -1627,12 +1625,12 @@ class ParagraphsWidget extends WidgetBase {
   }
 
   /**
-   * Builds list of prefixes for icons mode.
+   * Builds list of prefixes for modal_full mode.
    *
    * @return array
    *   Prefixes array.
    */
-  public static function iconsElementsPrefixes() {
+  public static function modalFullElementsPrefixes() {
     return [
       'add_more_button_',
       'paragraph_entity_description_',

@@ -74,9 +74,9 @@ function paragraphs_theme() {
       'render element' => 'element',
       'template' => 'paragraphs-add-dialog',
     ],
-    'paragraphs_add_icons' => [
+    'paragraphs_add_modal_full' => [
       'render element' => 'element',
-      'template' => 'paragraphs-add-icons',
+      'template' => 'paragraphs-add-modal-full',
     ],
     'paragraphs_actions' => [
       'render element' => 'element',
@@ -313,15 +313,15 @@ function template_preprocess_paragraphs_add_dialog(&$variables) {
 /**
  * Prepares variables for images and description modal form add widget template.
  *
- * Default template: paragraphs-add-icons.html.twig.
+ * Default template: paragraphs-add-modal-full.html.twig.
  *
  * @param array $variables
  *   An associative array containing:
  *   - items: An array of items containing image, description and button
  *     to display in the modal form.
  */
-function template_preprocess_paragraphs_add_icons(array &$variables) {
-  $prefixes = ParagraphsWidget::iconsElementsPrefixes();
+function template_preprocess_paragraphs_add_modal_full(array &$variables) {
+  $prefixes = ParagraphsWidget::modalFullElementsPrefixes();
   // Define variables for the template.
   $variables += ['items' => []];
 
