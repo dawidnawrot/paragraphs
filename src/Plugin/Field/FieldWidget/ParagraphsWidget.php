@@ -1566,16 +1566,24 @@ class ParagraphsWidget extends WidgetBase {
         $image_key = $prefixes[2] . $machine_name;
 
         $add_more_elements[$image_key] = [
-          '#type' => 'item',
-          '#markup' => \Drupal::service('renderer')->render($image),
+          '#type' => 'html_tag',
+          '#tag' => 'div',
+          '#value' => \Drupal::service('renderer')->render($image),
+          '#attributes' => [
+            'class' => ['paragraph-image'],
+          ],
         ];
 
         // Description.
         if ($description = $paragraphs_type_storage->load($machine_name)->getDescription()) {
           $description_key = $prefixes[1] . $machine_name;
           $add_more_elements[$description_key] = [
-            '#type' => 'item',
-            '#markup' => $description,
+            '#type' => 'html_tag',
+            '#tag' => 'div',
+            '#value' => $description,
+            '#attributes' => [
+              'class' => ['paragraph-description'],
+            ],
           ];
         }
       }

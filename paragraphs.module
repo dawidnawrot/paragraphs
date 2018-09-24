@@ -339,7 +339,7 @@ function template_preprocess_paragraphs_add_icons(array &$variables) {
       $variables['items'][$element_key][$key] = $variables['element'][$key];
     }
   }
-  ksm($variables['items']);
+  //ksm($variables['items']);
 }
 
 /**
