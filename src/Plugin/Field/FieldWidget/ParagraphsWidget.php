@@ -1554,7 +1554,7 @@ class ParagraphsWidget extends WidgetBase {
     // Build the buttons.
     $add_more_elements = [];
     foreach ($options as $machine_name => $label) {
-
+      // Add mode: modal full.
       if ($add_mode === 'icons') {
         // Generate icon.
         $icon_url = (!empty($paragraphs_type_storage->load($machine_name)->getIconUrl())) ? $paragraphs_type_storage->load($machine_name)->getIconUrl() : drupal_get_path('module', 'paragraphs') . '/icons/no-camera.svg';

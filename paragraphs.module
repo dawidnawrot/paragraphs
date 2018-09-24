@@ -313,17 +313,18 @@ function template_preprocess_paragraphs_add_dialog(&$variables) {
 /**
  * Prepares variables for images and description modal form add widget template.
  *
- * Default template: paragraphs-add-icons.html.twig
+ * Default template: paragraphs-add-icons.html.twig.
  *
  * @param array $variables
  *   An associative array containing:
- *   - buttons: An array of buttons to display in the modal form.
+ *   - items: An array of items containing image, description and button
+ *     to display in the modal form.
  */
 function template_preprocess_paragraphs_add_icons(array &$variables) {
   $prefixes = ParagraphsWidget::iconsElementsPrefixes();
   // Define variables for the template.
   $variables += ['items' => []];
-  
+
   foreach (Element::children($variables['element']) as $key) {
     if ($key == 'add_modal_form_area') {
       // $add variable for the add button.
@@ -339,7 +340,6 @@ function template_preprocess_paragraphs_add_icons(array &$variables) {
       $variables['items'][$element_key][$key] = $variables['element'][$key];
     }
   }
-  //ksm($variables['items']);
 }
 
 /**
@@ -352,7 +352,7 @@ function template_preprocess_paragraphs_add_icons(array &$variables) {
  *   - actions: An array of default action buttons.
  *   - dropdown_actions: An array of buttons for dropdown.
  */
-function template_preprocess_paragraphs_actions(&$variables) {
+function template_preprocess_paragraphs_actions(array &$variables) {
   // Define variables for the template.
   $variables += ['actions' => [], 'dropdown_actions' => []];
 
